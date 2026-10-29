@@ -1,0 +1,19 @@
+{
+    "name": "yebt/let-code-daily-challenges",
+    "description": "Just my tries to be a coder",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "LCBASE\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eduardo Bravo"
+        }
+    ],
+    "require-dev": {
+        "carthage-software/mago": "^1.59.0",
+        "symfony/var-dumper": "^8.1"
+    }
+}
