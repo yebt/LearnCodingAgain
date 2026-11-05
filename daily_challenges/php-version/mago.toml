@@ -6,5 +6,5 @@ php-version = "8.3"
 threads = 4
 
 [source]
-excludes = ["vendor", "node_modules"]
+excludes = ["vendor", "node_modules", "cache/**", "docs/**"]
 
