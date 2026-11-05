@@ -1,0 +1,10 @@
+#:schema https://mago.carthage.software/1.59.0/schema.json
+# yaml-language-server: $schema=https://mago.carthage.software/1.59.0/schema.json
+version = "1"
+php-version = "8.3"
+
+threads = 4
+
+[source]
+excludes = ["vendor", "node_modules"]
+
