@@ -18,6 +18,7 @@
         }
     ],
     "require-dev": {
-        "carthage-software/mago": "^1.59"
+        "carthage-software/mago": "^1.59",
+        "symfony/var-dumper": "^8.1"
     }
 }
