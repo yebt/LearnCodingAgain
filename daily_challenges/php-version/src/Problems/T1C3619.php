@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace LCPHP\Problems;
 
 use LCPHP\TestSuite\TestingBaseSuite;
-use LCPHP\Utils\Printer;
 
+/**
+ * 
+* You are given an m x n matrix grid and a positive integer k. An island is a group of positive integers (representing land) that are 4-directionally connected (horizontally or vertically).
+* 
+* The total value of an island is the sum of the values of all cells in the island.
+* 
+* Return the number of islands with a total value divisible by k.
+ * */
 class T1C3619
 {
     /**
