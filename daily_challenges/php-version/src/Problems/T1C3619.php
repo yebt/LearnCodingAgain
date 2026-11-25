@@ -24,91 +24,85 @@ class T1C3619
         $actualTag = 0;
 
         /** @var array<string,int> */
-        $hashIslandsSum = []; // This contains a hash dictionary with the sum of the islands
-
-        /** @var array<int,int> */
-        $tagToHash = []; // A tag point to specific hash in sum
+        $islandsSums = []; // This contains a hash dictionary with the sum of the islands
 
         /** @var int[][] */
-        $propagatedTags = []; // where i put the propagated Tags
+        $previousTags = []; // where i put the propagated Tags
 
         for ($i = 0; $i < $rowsCount; $i++) {
             for ($j = 0; $j < $colsCount; $j++) {
                 $elementToEvaluate = $grid[$i][$j];
 
                 if ($elementToEvaluate !== 0) {
-                    $previouslyTag = $propagatedTags[$i][$j] ?? null;
-
-                    if (!isset($previouslyTag)) {
-                        // New Tag
-                        $actualTag++;
-                        $hashForActualTag = '#' . $actualTag;
-                        $hashIslandsSum[$hashForActualTag] = 0; // init the sum for this position
-                        $tagToHash[$actualTag] = $hashForActualTag;
-                    } else {
-                        $hashForActualTag = $tagToHash[$previouslyTag];
+                    // check if already was visited
+                    if (isset($previousTags[$i][$j])) {
+                        continue;
                     }
 
-                    $tagForThePosition = $previouslyTag ?? $actualTag;
+                    $actualTag++;
+                    $islandNodes = [[$i, $j]]; // list of the nodes
+                    $islandsSums[$actualTag] = 0;
+                    $previousTags[$i][$j] = 1;
 
-                    // Increase
-                    $hashIslandsSum[$hashForActualTag] =
-                        (($hashIslandsSum[$hashForActualTag] ?? null) + $elementToEvaluate) % $k;
+                    while (count($islandNodes) > 0) {
+                        $nodeToExpand = array_shift($islandNodes);
 
-                    // Propagate Right
-                    if ($j < ($colsCount - 1) && $grid[$i][$j + 1] > 0) {
-                        // check if right already was a tag
-                        $rightPropagatedTag = $propagatedTags[$i][$j + 1] ?? null;
+                        $nodeRowPos = $nodeToExpand[0];
+                        $nodeColPos = $nodeToExpand[1];
+                        $nodeExpandedFrom = $nodeToExpand[2] ?? null;
+                        $nodeValue = $grid[$nodeRowPos][$nodeColPos];
 
-                        if (isset($rightPropagatedTag) && $rightPropagatedTag != $tagForThePosition) {
-                            $hashForPropagatedTag = $tagToHash[$rightPropagatedTag];
+                        $islandsSums[$actualTag] = ($islandsSums[$actualTag] + $nodeValue) % $k;
 
-                            if ($hashForPropagatedTag != $hashForActualTag) {
-                                // sum
-                                $hashIslandsSum[$hashForPropagatedTag] =
-                                    (($hashIslandsSum[$hashForPropagatedTag] ?? 0) + $hashIslandsSum[$hashForActualTag])
-                                    % $k;
-                                // Move the tag point
-                                $tagToHash[$tagForThePosition] = $hashForPropagatedTag;
-                                if (isset($hashIslandsSum[$hashForActualTag])) {
-                                    unset($hashIslandsSum[$hashForActualTag]);
-                                }
-
-                                $tagForThePosition = $rightPropagatedTag;
-                            }
-                        } else {
-                            // Propagate
-                            /* $propagatedTags[$i][$j + 1] = $tagForThePosition; */
+                        // expand
+                        // left
+                        if (
+                            $nodeColPos > 0
+                            && $grid[$nodeRowPos][$nodeColPos - 1] != 0
+                            && $nodeExpandedFrom != 'R'
+                            && !isset($previousTags[$nodeRowPos][$nodeColPos - 1])
+                        ) {
+                            $islandNodes[] = [$nodeRowPos, $nodeColPos - 1, 'L'];
+                            $previousTags[$nodeRowPos][$nodeColPos - 1] = 1;
                         }
-                        $propagatedTags[$i][$j + 1] = $tagForThePosition;
-                    }
-                    // Propagate Down
-                    if ($i < ($rowsCount - 1) && $grid[$i + 1][$j] > 0) {
-                        $propagatedTags[$i + 1][$j] = $tagForThePosition;
+                        // right
+                        if (
+                            $nodeColPos < ($colsCount - 1)
+                            && $grid[$nodeRowPos][$nodeColPos + 1] != 0
+                            && $nodeExpandedFrom != 'L'
+                            && !isset($previousTags[$nodeRowPos][$nodeColPos + 1])
+                        ) {
+                            $islandNodes[] = [$nodeRowPos, $nodeColPos + 1, 'R'];
+                            $previousTags[$nodeRowPos][$nodeColPos + 1] = 1;
+                        }
+                        // down
+                        if (
+                            $nodeRowPos < ($rowsCount - 1)
+                            && $grid[$nodeRowPos + 1][$nodeColPos] != 0
+                            && $nodeExpandedFrom != 'U'
+                            && !isset($previousTags[$nodeRowPos + 1][$nodeColPos])
+                        ) {
+                            $islandNodes[] = [$nodeRowPos + 1, $nodeColPos, 'D'];
+                            $previousTags[$nodeRowPos + 1][$nodeColPos] = 1;
+                        }
+                        // up
+                        if (
+                            $nodeRowPos > 0
+                            && $grid[$nodeRowPos - 1][$nodeColPos] != 0
+                            && $nodeExpandedFrom != 'D'
+                            && !isset($previousTags[$nodeRowPos - 1][$nodeColPos])
+                        ) {
+                            $islandNodes[] = [$nodeRowPos - 1, $nodeColPos, 'U'];
+                            $previousTags[$nodeRowPos - 1][$nodeColPos] = 1;
+                        }
                     }
                 }
-
-                if ($i == 0 && $i == $j) {
-                    Printer::imprimirMatriz($grid);
-                    Printer::pressToContinue();
-                    Printer::clear();
-                }
-                echo "Actual Tag: [$actualTag]\n";
-                echo ">> i: $i  j: $j  =  $elementToEvaluate\n";
-                echo "Islands \n";
-                Printer::imprimirDiccionario($hashIslandsSum);
-                echo "TagToHash \n";
-                Printer::imprimirDiccionario($tagToHash);
-                echo "PropagatedTags \n";
-                Printer::imprimirDiccionario($propagatedTags);
-                Printer::pressToContinue();
-                Printer::clear();
             }
         }
 
         $divisibleIslands = 0;
 
-        foreach ($hashIslandsSum as $value) {
+        foreach ($islandsSums as $value) {
             if ($value === 0) {
                 $divisibleIslands++;
             }
@@ -226,7 +220,7 @@ $testSuite = [
             ],
             1,
         ],
-        2,
+        1,
     ],
     [
         [
@@ -2328,8 +2322,8 @@ class_alias(T1C3619::class, 'Solution');
 use Solution;
 
 TestingBaseSuite::runSuite(
-    [$testSuite[count($testSuite) - 2]],
-    /* [$testSuite[4]], */
-    /* $testSuite, */
+    /* [$testSuite[count($testSuite) - 2]], */
+    /* [$testSuite[8]], */
+    $testSuite,
     [new Solution(), 'countIslands'],
 );
