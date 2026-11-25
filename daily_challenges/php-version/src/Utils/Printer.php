@@ -84,4 +84,16 @@ class Printer
             }
         }
     }
+
+    public static function clear()
+    {
+        echo "\033[2J\033[;H";
+    }
+
+    public static function pressToContinue()
+    {
+        echo "\n ================================ \n";
+        echo 'Press Enter to continue...';
+        fgets(STDIN);
+    }
 }
