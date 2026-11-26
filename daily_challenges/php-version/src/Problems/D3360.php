@@ -70,20 +70,6 @@ class D3360
         $isEven = ((int) $pos % 2) == 0;
 
         return $isEven xor $isInt;
-
-        /* if ($isEven) { */
-        /*     // last play was Bob */
-        /*     return !$isint; */
-        /* } else { */
-        /**/
-        /*     // last plat was Alice */
-        /*     return $isint; */
-        /* } */
-        /* return match (true) { */
-        /*     $n < 10 => false, */
-        /*     $n == 10 => true, */
-        /*     default => (($n - 10) % 2) == 0, */
-        /* }; */
     }
 }
 
